@@ -1,0 +1,34 @@
+Description: Make serf_bucket_aggregate_prepend() behave properly when prepending a bucket to an empty list
+Origin: upstream, https://svn.apache.org/viewvc?view=revision&revision=1712790
+
+Index: b/buckets/aggregate_buckets.c
+===================================================================
+--- a/buckets/aggregate_buckets.c
++++ b/buckets/aggregate_buckets.c
+@@ -149,6 +149,8 @@
+     new_list->bucket = prepend_bucket;
+     new_list->next = ctx->list;
+ 
++    if (ctx->list == NULL)
++        ctx->last = new_list;
+     ctx->list = new_list;
+ }
+ 
+@@ -278,6 +280,8 @@
+ 
+             /* If we have no more in our list, return EOF. */
+             if (!ctx->list) {
++                ctx->last = NULL;
++
+                 if (ctx->hold_open) {
+                     return ctx->hold_open(ctx->hold_open_baton, bucket);
+                 }
+@@ -390,6 +394,8 @@
+ 
+             /* If we have no more in our list, return EOF. */
+             if (!ctx->list) {
++                ctx->last = NULL;
++
+                 if (ctx->hold_open) {
+                     return ctx->hold_open(ctx->hold_open_baton, bucket);
+                 }

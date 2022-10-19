@@ -1,0 +1,59 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+DEB_BUILD_MAINT_OPTIONS=hardening=+all
+DEB_LDFLAGS_MAINT_APPEND=-Wl,-z,defs
+include /usr/share/dpkg/default.mk
+
+libdir = /usr/lib/$(DEB_HOST_MULTIARCH)
+libpkg = libserf-1-1
+
+parallel =
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+    NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+    parallel = -j $(NUMJOBS)
+endif
+
+silent =
+ifneq (,$(filter terse,$(DEB_BUILD_OPTIONS)))
+    silent = --silent
+endif
+
+%:
+	dh $@
+
+.PHONY: build
+build: build-arch build-indep
+override_dh_auto_build:
+	scons $(parallel) $(silent) GSSAPI=/usr CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LINKFLAGS="$(LDFLAGS)" PREFIX=/usr LIBDIR=$(libdir)
+
+ifeq (, $(filter nocheck,$(DEB_BUILD_OPTIONS)))
+override_dh_auto_test:
+	if ! [ -d debian/distcerts ]; then \
+	    mkdir -p debian/testcerts/private debian/distcerts; \
+	    cp test/server/*.pem test/server/serfclientcert.p12 debian/distcerts/; \
+	    (cd debian/testcerts && python3 ../create_certs.py); \
+	    cp debian/testcerts/*.pem debian/testcerts/private/serfserverkey.pem debian/testcerts/serfclientcert.p12 test/server/; \
+	fi
+	# Ignore failures until upstream fixes their tests with OpenSSL 3
+	scons $(silent) check CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LINKFLAGS="$(LDFLAGS)" || true
+endif
+
+override_dh_auto_clean:
+	rm -rf debian/testcerts
+	if [ -d debian/distcerts ]; then \
+	    rm test/server/*.pem test/server/*.p12; \
+	    cp debian/distcerts/* test/server/; \
+	fi
+	scons -c
+
+override_dh_auto_install:
+	scons $(silent) install PREFIX=$(CURDIR)/debian/tmp/usr LIBDIR=debian/tmp$(libdir)
+	chrpath -d $(CURDIR)/debian/tmp/$(libdir)/*.so.*
+
+override_dh_installchangelogs:
+	dh_installchangelogs CHANGES
+
+override_dh_shlibdeps:
+	dh_shlibdeps
+	sed -i 's:libserf-private\(, *\)\?::' debian/*.substvars

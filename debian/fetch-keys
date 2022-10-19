@@ -1,0 +1,60 @@
+#!/bin/sh
+set -eu
+
+usage() {
+  rc=$1
+
+  if [ "$rc" -ne 0 ]; then
+    exec 1>&2
+  fi
+
+  printf 'Usage: %s <version>
+
+Retrieve signing keys for upstream version <version> and store the minimized
+version to debian/upstream/signing-key.asc.
+
+Must be run from top level of source package.
+' $0
+  exit "$rc"
+}
+
+keyurl() {
+  # Ignore the version unless/until they start versioning it like svn
+  printf 'https://people.apache.org/keys/group/serf.asc' # "$1"
+}
+
+SIGNING_KEY=debian/upstream/signing-key.asc
+dh_testdir "$SIGNING_KEY"
+
+UVER=
+
+if [ "$#" -lt 1 ]; then
+  usage 1
+fi
+
+case "$1" in
+  -h|--help)
+    usage 0
+    ;;
+  -*)
+    usage 1
+    ;;
+  *)
+    UVER="$1"
+    shift
+    ;;
+esac
+
+export GNUPGHOME="$(mktemp -d)"
+trap "rm -r \"$GNUPGHOME\"" EXIT
+
+FULLKEYS="$GNUPGHOME/fullkeys"
+
+wget -nv -O "$FULLKEYS" "$(keyurl "$UVER")"
+gpg --batch --quiet --import "$FULLKEYS"
+
+: > "$SIGNING_KEY"
+for fpr in $(gpg --with-colons --list-keys --fingerprint --fingerprint | awk -F: 'BEGIN { print_fpr = 0; } /^fpr:/{ if (print_fpr == 1) { printf "%s\n", $10; print_fpr = 0; } } /^pub:/{ print_fpr = 1; }' | sort); do
+  printf 'Exporting key for fingerprint %s...\n' "$fpr"
+  gpg --armor --export --export-options export-minimal,export-clean "$fpr" >> "$SIGNING_KEY"
+done

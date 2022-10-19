@@ -1,0 +1,3 @@
+version=3
+opts=pgpsigurlmangle=s/$/.asc/ \
+https://serf.apache.org/download.html (?:.*/)?serf-([\d.]+)\.tar\.bz2

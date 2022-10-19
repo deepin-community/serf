@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+CC=${CC:-cc}
+
+SRCDIR=$(pwd)
+cd "$AUTOPKGTEST_TMP"
+
+cp -a "${SRCDIR}/debian/tests/Makefile" "${SRCDIR}/build/check.py" "${SRCDIR}/serf_private.h" "${SRCDIR}/test" "${SRCDIR}/debian/create_certs.py" .
+
+make check

@@ -1,0 +1,87 @@
+Index: test/test_context.c
+===================================================================
+--- a/test/test_context.c (revision 1885525)
++++ b/test/test_context.c (working copy)
+@@ -1138,7 +1138,7 @@
+
+     /* We expect an error from the certificate validation function. */
+     if (failures & expected_failures)
+-        return APR_SUCCESS;
++        return APR_EGENERAL;
+     else
+         return SERF_ERROR_ISSUE_IN_TESTSUITE;
+ }
+@@ -1206,8 +1206,8 @@
+
+     create_new_request(tb, &handler_ctx[0], "GET", "/", 1);
+
+-    test_helper_run_requests_expect_ok(tc, tb, num_requests, handler_ctx,
+-                                       test_pool);
++    test_helper_run_requests_expect_fail(tc, tb, num_requests, handler_ctx,
++                                         test_pool);
+ }
+
+ /* Set up the ssl context with the CA and root CA certificates needed for
+@@ -1774,8 +1774,8 @@
+
+     create_new_request(tb, &handler_ctx[0], "GET", "/", 1);
+
+-    test_helper_run_requests_expect_ok(tc, tb, num_requests, handler_ctx,
+-                                       test_pool);
++    test_helper_run_requests_expect_fail(tc, tb, num_requests, handler_ctx,
++                                         test_pool);
+ }
+
+ /* Validate that the expired certificate is reported as failure in the
+@@ -1820,8 +1820,8 @@
+
+     create_new_request(tb, &handler_ctx[0], "GET", "/", 1);
+
+-    test_helper_run_requests_expect_ok(tc, tb, num_requests, handler_ctx,
+-                                       test_pool);
++    test_helper_run_requests_expect_fail(tc, tb, num_requests, handler_ctx,
++                                         test_pool);
+ }
+
+
+Index: test/test_serf.h
+===================================================================
+--- a/test/test_serf.h (revision 1885525)
++++ b/test/test_serf.h (working copy)
+@@ -239,6 +239,12 @@
+                                    int num_requests,
+                                    handler_baton_t handler_ctx[],
+                                    apr_pool_t *pool);
++void
++test_helper_run_requests_expect_fail(CuTest *tc, test_baton_t *tb,
++                                     int num_requests,
++                                     handler_baton_t handler_ctx[],
++                                     apr_pool_t *pool);
++
+ serf_bucket_t* accept_response(serf_request_t *request,
+                                serf_bucket_t *stream,
+                                void *acceptor_baton,
+Index: test/test_util.c
+===================================================================
+--- a/test/test_util.c (revision 1885525)
++++ b/test/test_util.c (working copy)
+@@ -461,6 +461,19 @@
+     CuAssertIntEquals(tc, num_requests, tb->handled_requests->nelts);
+ }
+
++void
++test_helper_run_requests_expect_fail(CuTest *tc, test_baton_t *tb,
++                                     int num_requests,
++                                     handler_baton_t handler_ctx[],
++                                     apr_pool_t *pool)
++{
++    apr_status_t status;
++
++    status = test_helper_run_requests_no_check(tc, tb, num_requests,
++                                               handler_ctx, pool);
++    CuAssertIntEquals(tc, APR_EGENERAL, status);
++}
++
+ serf_bucket_t* accept_response(serf_request_t *request,
+                                serf_bucket_t *stream,
+                                void *acceptor_baton,

@@ -1,0 +1,3 @@
+Tests: upstream-tests
+Restrictions: allow-stderr
+Depends: @, @builddeps@, pkg-config

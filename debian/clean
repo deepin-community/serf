@@ -1,0 +1,6 @@
+.saved_config
+.sconf_temp/
+.sconsign.dblite
+config.log
+debian/distcerts/
+test/server/serfclient.p12

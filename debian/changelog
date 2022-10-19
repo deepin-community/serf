@@ -1,0 +1,395 @@
+serf (1.3.9-11) UNRELEASED; urgency=medium
+
+  * update
+
+ -- James McCoy <jamessan@debian.org>  Thu, 16 Jun 2022 14:25:41 +0800
+
+serf (1.3.9-11) unstable; urgency=medium
+
+  [ James McCoy ]
+  * Fix build with OpenSSL 3 (Closes: #1006572)
+  * Ignore test failures until upstream fixes their tests with OpenSSL 3
+  * Declare compliance with Policy 4.6.1, no changes needed
+
+  [ Simon Chopin ]
+  * d/p/bio-ctrl.patch: imported from FreeBSD, fixes TLS issues with OpenSSL3
+    (LP: #1956040)
+
+  [ Vagrant Cascadian ]
+  * debian/rules: Pass relative path to LIBDIR in dh_auto_install override.
+    (Closes: #1010043)
+
+ -- James McCoy <jamessan@debian.org>  Sat, 14 May 2022 16:57:22 -0400
+
+serf (1.3.9-10) unstable; urgency=medium
+
+  * ci: Add pkg-config to Depends
+  * ci: Add allow-stderr restriction
+
+ -- James McCoy <jamessan@debian.org>  Sun, 17 Jan 2021 09:57:34 -0500
+
+serf (1.3.9-9) unstable; urgency=medium
+
+  * Include upstream patch to fix OpenSSL 1.1.1i compat (Closes: #978353)
+  * rules: Remove explicit -Wl,--as-needed, since it is default
+  * Run upstream tests for CI
+
+ -- James McCoy <jamessan@debian.org>  Sat, 16 Jan 2021 10:35:52 -0500
+
+serf (1.3.9-8) unstable; urgency=medium
+
+  * Enable building with Python3
+    - Use Python3 to generate test certificates
+      + Change python-openssl Build-Depends to python3-openssl
+    - Add py3-compat patch
+      + Use py2/py3 compatible syntax in SConstruct (Closes: #947581)
+      + Use py2/py3 compatible syntax in build/*.py (Closes: #943263)
+  * Remove debian/distcerts/ in clean target
+  * debian/rules:
+    - Build tests with the same flags as the library
+    - Add support for DEB_BUILD_OPTIONS=terse
+    - Remove unnecessary -arch qualifications in override rules
+    - Add .PHONY build rule to override build directory
+  * debian/control:
+    - Remove obsolete version requirement for scons Build-Depends
+  * Install libserf-dev examples in /usr/share/doc/libserf-dev instead of
+    symlinking to /u/s/d/libserf-1-1
+  * Add script to update/minimize signing keys
+  * Update/minimize upstream signing keys
+  * Declare compliance with Policy 4.4.1, no changes needed
+  * Switch to debhelper compat 12 via debhelper-compat
+
+ -- James McCoy <jamessan@debian.org>  Mon, 30 Dec 2019 07:55:43 -0500
+
+serf (1.3.9-7) unstable; urgency=medium
+
+  * Backport create_certs.py from upstream to generate certs at test time
+    (Closes: #911714)
+  * Remove obsolete dbgsym migration
+  * Opt-in to debhelper 12 beta
+  * Declare compliance with Policy 4.2.1
+
+ -- James McCoy <jamessan@debian.org>  Sat, 27 Oct 2018 10:17:10 -0400
+
+serf (1.3.9-6) unstable; urgency=medium
+
+  * Backport r1712790 from upstream to fix NULL pointer dereference.
+    Thanks to Colin Watson for investigation and report (Closes: #893688)
+
+ -- James McCoy <jamessan@debian.org>  Wed, 21 Mar 2018 21:38:37 -0400
+
+serf (1.3.9-5) unstable; urgency=medium
+
+  * control: Change Vcs-* to salsa.debian.org
+  * Bump debhelper compat to 11
+  * control: Declare compliance with Policy 4.1.3
+  * control: Mark libserf-dev Multi-Arch: same
+
+ -- James McCoy <jamessan@debian.org>  Thu, 15 Mar 2018 21:57:08 -0400
+
+serf (1.3.9-4) unstable; urgency=medium
+
+  * Mark serf_debug__closed_conn as a public symbol, since svn has been using
+    it for 10 years.
+  * Declare compliance with Policy 4.1.1, no changes needed
+  * Change source format to 3.0 (quilt)
+  * Set R³ to no
+  * Switch to dh-based rules
+
+ -- James McCoy <jamessan@debian.org>  Sun, 12 Nov 2017 21:19:32 -0500
+
+serf (1.3.9-3) unstable; urgency=medium
+
+  * Add libssl-dev to libserf-dev's Depends, otherwise pkg-config can't
+    provide information about serf.  Thanks to Daniel Shahaf for noticing!
+
+ -- James McCoy <jamessan@debian.org>  Wed, 07 Jun 2017 23:09:48 -0400
+
+serf (1.3.9-2) unstable; urgency=medium
+
+  * Remove Peter Samuelson as maintainer, at request of MIA team.  Thanks for
+    all the fish!  (Closes: #852220)
+  * Backport r1792234 to fix test failures due to expired test certificates.
+    (Closes: #862027)
+
+ -- James McCoy <jamessan@debian.org>  Sun, 07 May 2017 22:02:00 -0400
+
+serf (1.3.9-1) unstable; urgency=medium
+
+  * New upstream release
+    - patches/comment-style_r2443, patches/openssl-1.1.x_r1750819,
+      patches/test-memory-usage_r2445: Drop, merged upstream
+  * d/rules: Remove more SCons cruft in clean target
+
+ -- James McCoy <jamessan@debian.org>  Fri, 02 Sep 2016 00:20:04 -0400
+
+serf (1.3.8-3) unstable; urgency=medium
+
+  * Backport r1750819 from upstream to add support for OpenSSL 1.1.x.
+    (Closes: #828541)
+  * Replace deprecated uses of debhelper's -s with -a.
+  * Declare compliance with policy 3.9.8, no changes needed.
+  * Use https URIs for Vcs-*.
+  * Enable hardening build flags.
+
+ -- James McCoy <jamessan@debian.org>  Sat, 23 Jul 2016 23:39:33 -0400
+
+serf (1.3.8-2) unstable; urgency=medium
+
+  * Update URLs to refer to serf.apache.org rather than code.google.com.
+  * Declare compliance with policy 3.9.7, no changes needed.
+  * Migrate to automatic debug packages.
+
+ -- James McCoy <jamessan@debian.org>  Sun, 28 Feb 2016 07:37:33 -0500
+
+serf (1.3.8-1) unstable; urgency=medium
+
+  * New upstream release
+    - Disable SSLv2 and SSLv3
+  * Backport r2445 from upstream to fix potential memory allocation failures
+    in the test suite.
+  * Backport r2443 from upstream to fix a compile failure in the test suite.
+
+ -- James McCoy <jamessan@debian.org>  Thu, 04 Dec 2014 19:06:24 -0500
+
+serf (1.3.7-3) unstable; urgency=medium
+
+  * Specify the proper prefix/libdir when building libserf-1.pc.
+    (Closes: LP: #1388271)
+
+ -- James McCoy <jamessan@debian.org>  Mon, 17 Nov 2014 21:12:38 -0500
+
+serf (1.3.7-2) unstable; urgency=medium
+
+  * debian/control:
+    + Bump versioned Build-Depends on scons >= 2.3.1-2 to ensure we have an
+      scons which can understand krb5-config's use of -isystem (c.f., #760804).
+    + Add libssl-dev/zlib1g-dev to Build-Depends as they're needed to build
+      and no longer transitively pulled in.  (Closes: #768664)
+
+ -- James McCoy <jamessan@debian.org>  Sun, 09 Nov 2014 14:11:13 -0500
+
+serf (1.3.7-1) unstable; urgency=medium
+
+  * New upstream release
+    + Includes security fix:
+      - CVE-2014-3504: Improper validation of certificate with host mismatch
+        (Closes: #757965)
+  * control: Pre-Depend on ${misc:Pre-Depends} instead of hard-coding
+    multiarch-support.
+  * control: Add Vcs-* fields.
+
+ -- James McCoy <jamessan@debian.org>  Tue, 12 Aug 2014 23:32:58 -0400
+
+serf (1.3.6-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- James McCoy <jamessan@debian.org>  Fri, 13 Jun 2014 23:46:01 -0400
+
+serf (1.3.5-1) unstable; urgency=medium
+
+  * New upstream release
+    + Update test certificates.  Fixes FTBFS.  (Closes: #746129)
+  * debian/rules: Specify PREFIX/LIBDIR only when running “scons install”.
+    They're unnecessary for the other scons calls, but mandatory for the
+    install target, otherwise the install tries to use upstream defaults.
+  * debian/watch: Scrape https://code.google.com/p/serf/ instead of the
+    download page since the download page isn't being updated.
+
+ -- James McCoy <jamessan@debian.org>  Mon, 28 Apr 2014 20:23:40 -0400
+
+serf (1.3.4-2) unstable; urgency=medium
+
+  * Enable Kerberos/GSSAPI support (Closes: #740717)
+    + d/control: Add libkrb5-dev
+    + d/rules: Tell scons where to find GSSAPI
+  * Link with -Wl,--as-needed to avoid unnecessary dependencies
+
+ -- James McCoy <jamessan@debian.org>  Tue, 04 Mar 2014 23:06:00 -0500
+
+serf (1.3.4-1) unstable; urgency=medium
+
+  * New upstream version
+  * Bump Standards-Version to 3.9.5
+
+ -- James McCoy <jamessan@debian.org>  Sun, 09 Feb 2014 22:53:33 -0500
+
+serf (1.3.3-1) unstable; urgency=low
+
+  * Add myself to Uploaders.
+  * Change the watch file to better handle code.google.com.
+  * New upstream release.  (Closes: #716793)
+    + Refresh patches/libtool
+    + Update symbols
+  * Adapt packaging for the upstream switch to SCons.
+    + control: + scons, - autotools-dev, autoconf
+    + rules: Change configure/make calls to scons
+  * Rename libserf1 to libserf-1-1, following standard naming conventions.
+  * Enable hardening flags.
+  * Strip unnecessary RPATH from libserf.
+  * Honor DEB_BUILD_OPTIONS=parallel=X
+
+ -- James McCoy <jamessan@debian.org>  Tue, 31 Dec 2013 13:17:16 -0500
+
+serf (1.1.0-2) unstable; urgency=low
+
+  * Upload to unstable.
+  * Add another lintian override.
+  * Make libserf1-dbg M-A: same as well.
+
+ -- Peter Samuelson <peter@p12n.org>  Sat, 09 Jun 2012 14:26:56 -0500
+
+serf (1.1.0-1) experimental; urgency=low
+
+  * New upstream version.
+  * Policy 3.9.3 (no changes).
+
+ -- Peter Samuelson <peter@p12n.org>  Fri, 08 Jun 2012 00:18:56 -0500
+
+serf (1.0.1-1) experimental; urgency=low
+
+  * New upstream release.
+    - patches/bind_address_family: Delete, applied upstream.
+  * Delete obsolete lintian override (workaround for an old lintian).
+
+ -- Peter Samuelson <peter@p12n.org>  Sat, 25 Feb 2012 14:43:53 -0600
+
+serf (1.0.0-2) experimental; urgency=low
+
+  * patches/bind_address_family: New patch from Anders Kaseorg to replace
+    patches/ip6-localhost.  We'll see if it addresses #632573.
+  * Policy 3.9.2 (no changes).
+
+ -- Peter Samuelson <peter@p12n.org>  Wed, 17 Aug 2011 17:12:21 -0500
+
+serf (1.0.0-1) experimental; urgency=low
+
+  * New upstream release.
+    - patches/out-of-tree, patches/kqueue: Remove, accepted upstream.
+    - Now ships pkgconfig file serf-1.pc.
+
+ -- Peter Samuelson <peter@p12n.org>  Fri, 15 Jul 2011 17:49:29 -0500
+
+serf (1.0.0~0+svn1514-1) experimental; urgency=low
+
+  * New upstream snapshot.
+    - patches/abi-0.x: Remove as obsolete.
+    - patches/kqueue: Forward-port.
+    - Bump ABI: libserf0.7{,-dbg} -> libserf1{,-dbg}
+    - patches/ip6-localhost: New patch: temporary (I hope) workaround for
+      IPv4 / IPv6 confusion in testsuite.
+  * Implement Multi-Arch: same.
+  * libserf-dev Conflicts: libserf-0-0-dev, not Breaks.  Thanks, lintian.
+
+ -- Peter Samuelson <peter@p12n.org>  Mon, 27 Jun 2011 18:09:28 -0500
+
+serf (0.7.2-1) experimental; urgency=low
+
+  * New upstream release.
+    - patches/no-export-vars: delete, now upstream.
+  * New ABI:
+    - patches/abi-0.x: New patch to change upstream SONAME.
+    - Rename libserf-0-0 to libserf0.7.
+    - Rename libserf-0-0-dev to libserf-dev while we're at it.
+  * Policy 3.9.1: one instance of s/Conflicts/Breaks/.
+  * "Upgrade" to source format 1.0.
+  * Add some Depends: ${misc:Depends}; thanks, Lintian.
+
+ -- Peter Samuelson <peter@p12n.org>  Fri, 03 Jun 2011 03:18:07 -0500
+
+serf (0.3.1-1) unstable; urgency=low
+
+  * New upstream release.
+    - patches/libtool: update.
+
+ -- Peter Samuelson <peter@p12n.org>  Sun, 14 Feb 2010 23:04:17 -0600
+
+serf (0.3.0-2) unstable; urgency=low
+
+  * Make libserf-0-0-dev Replace older libserf-0-0.  (Closes: #557889)
+
+ -- Peter Samuelson <peter@p12n.org>  Tue, 24 Nov 2009 21:55:31 -0600
+
+serf (0.3.0-1) unstable; urgency=low
+
+  * New maintainer.  (Closes: #554068)  Ack my NMUs.
+  * Repackage, without cdbs.
+  * Install headers to /usr/include/serf-0 (upstream default), not /usr/include.
+  * Do not ship .la file; pretty sure nobody needs it anymore.
+  * patches/out-of-tree: New patch, for building outside the source tree.
+  * Fix Section of libserf-0-0-dbg to 'debug'.  Thanks, Lintian.
+
+ -- Peter Samuelson <peter@p12n.org>  Mon, 23 Nov 2009 03:25:24 -0600
+
+serf (0.3.0-0.3) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * patches/kqueue: New patch: fix FTBFS due to testsuite bug on BSD kernels.
+    Thanks Aurelien Jarno.  (Closes: #542063)
+
+ -- Peter Samuelson <peter@p12n.org>  Thu, 20 Aug 2009 08:36:44 -0500
+
+serf (0.3.0-0.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Add symbols file.
+  * patches/no-export-vars: New patch: do not export variables outside the
+    serf_ namespace.
+
+ -- Peter Samuelson <peter@p12n.org>  Sat, 04 Jul 2009 12:16:46 -0500
+
+serf (0.3.0-0.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * New upstream version.  (Closes: #520546)
+    - Deleted patches/work-around-an-error-of-libtool.diff, no longer needed.
+
+ -- Peter Samuelson <peter@p12n.org>  Tue, 23 Jun 2009 18:03:44 -0500
+
+serf (0.2.0-1) unstable; urgency=medium
+
+  * New upstream version (Closes: #485025):
+    - debian/copyright: Document that CuTest files are licensed under the
+      zlib/libpng license.
+    - debian/patches/*.diff: Refresh.
+  * Update Standards-Version to 3.8.0.
+    - debian/control: Make binNMU-safe by using ${binary:Version} instead of
+      ${Source-Version}.
+    - debian/control: Add new Homepage field.
+    - debian/copyright: Delete copy of /usr/share/common-licenses/Apache-2.0.
+    - debian/README.source: New file explaining quilt.
+  * Update the debhelper compatibility level to 7.
+    - debian/libserf-0-0-dev.install, debian/libserf-0-0.install:
+      Do not begin with debian/tmp since it is assumed to be the source path.
+  * debian/control: Add new Vcs-Git, and Vcs-Browser fields.
+  * Install test programs as example ones for libserf-0-0-dev.
+
+ -- Noritada Kobayashi <nori1@dolphin.c.u-tokyo.ac.jp>  Sun, 22 Jun 2008 11:14:06 +0900
+
+serf (0.1.2-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Noritada Kobayashi <nori1@dolphin.c.u-tokyo.ac.jp>  Tue, 19 Jun 2007 21:31:52 +0900
+
+serf (0.1.1-1) unstable; urgency=low
+
+  * New upstream version.
+    - Delete patches that are applied in the upstream:
+      r1091-remove-trailing-garbage.diff, r1092-implement-distclean.diff, and
+      r1094-add-readme.diff.
+
+ -- Noritada Kobayashi <nori1@dolphin.c.u-tokyo.ac.jp>  Mon, 28 May 2007 20:45:20 +0900
+
+serf (0.1.0-2) unstable; urgency=low
+
+  * Add a new libserf-0-0-dbg package for debugging.
+
+ -- Noritada Kobayashi <nori1@dolphin.c.u-tokyo.ac.jp>  Wed, 21 Feb 2007 03:27:51 +0900
+
+serf (0.1.0-1) unstable; urgency=low
+
+  * Initial release. (Closes: #403704)
+
+ -- Noritada Kobayashi <nori1@dolphin.c.u-tokyo.ac.jp>  Tue, 26 Dec 2006 12:58:46 +0900
