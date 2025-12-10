@@ -25,26 +25,12 @@ endif
 .PHONY: build
 build: build-arch build-indep
 override_dh_auto_build:
-	scons $(parallel) $(silent) GSSAPI=/usr CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LINKFLAGS="$(LDFLAGS)" PREFIX=/usr LIBDIR=$(libdir)
+	scons $(parallel) $(silent) GSSAPI=/usr CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LINKFLAGS="$(LDFLAGS)" PREFIX=/usr LIBDIR=$(libdir) CC="$(CC)"
 
-ifeq (, $(filter nocheck,$(DEB_BUILD_OPTIONS)))
 override_dh_auto_test:
-	if ! [ -d debian/distcerts ]; then \
-	    mkdir -p debian/testcerts/private debian/distcerts; \
-	    cp test/server/*.pem test/server/serfclientcert.p12 debian/distcerts/; \
-	    (cd debian/testcerts && python3 ../create_certs.py); \
-	    cp debian/testcerts/*.pem debian/testcerts/private/serfserverkey.pem debian/testcerts/serfclientcert.p12 test/server/; \
-	fi
-	# Ignore failures until upstream fixes their tests with OpenSSL 3
-	scons $(silent) check CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LINKFLAGS="$(LDFLAGS)" || true
-endif
+	scons $(silent) check CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LINKFLAGS="$(LDFLAGS)" CC="$(CC)"
 
 override_dh_auto_clean:
-	rm -rf debian/testcerts
-	if [ -d debian/distcerts ]; then \
-	    rm test/server/*.pem test/server/*.p12; \
-	    cp debian/distcerts/* test/server/; \
-	fi
 	scons -c
 
 override_dh_auto_install:

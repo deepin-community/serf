@@ -1,6 +1,3 @@
 libtool
 r1712790-serf_bucket_aggregate_prepend-empty-list
-py3-compat
-openssl-1.1.1i
-openssl-3.x
-bio-ctrl.patch
+gcc-14-ftbfs
