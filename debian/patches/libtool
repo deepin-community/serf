@@ -1,6 +1,8 @@
---- a/SConstruct
-+++ b/SConstruct
-@@ -364,8 +364,8 @@ else:
+Index: serf/SConstruct
+===================================================================
+--- serf.orig/SConstruct
++++ serf/SConstruct
+@@ -386,8 +386,8 @@ else:
    ### there is probably a better way to run/capture output.
    ### env.ParseConfig() may be handy for getting this stuff into the build
    if CALLOUT_OKAY:

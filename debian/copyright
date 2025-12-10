@@ -7,7 +7,7 @@ Copyright: serf contributors
 License: Apache
 
 Files: debian/*
-Copyright: help by the contributors mentioned in debian/changelog
+Copyright: held by the contributors mentioned in debian/changelog
 License: Apache
 
 Files: test/CuTest*

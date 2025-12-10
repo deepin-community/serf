@@ -20,7 +20,7 @@ Must be run from top level of source package.
 
 keyurl() {
   # Ignore the version unless/until they start versioning it like svn
-  printf 'https://people.apache.org/keys/group/serf.asc' # "$1"
+  printf 'https://www.apache.org/dist/serf/KEYS' # "$1"
 }
 
 SIGNING_KEY=debian/upstream/signing-key.asc

@@ -1,0 +1,43 @@
+From: James McCoy <jamessan@debian.org>
+Subject: Switch test buffers to const char * to fix FTBFS with gcc-14
+ gcc-14 enables -Werror=incompatible-pointer-types by default which results in build failures like
+ .
+	test/server/test_server.c: In function 'replay':
+	test/server/test_server.c:342:43: error: passing argument 3 of 'servctx->clientstream->type->read' from incompatible pointer type [-Wincompatible-pointer-types]
+	  342 |                                           &buf, &readlen);
+	      |                                           ^~~~
+	      |                                           |
+	      |                                           char **
+	./serf.h:912:29: note: in definition of macro 'SERF__RECREAD'
+	  912 | #define SERF__RECREAD(b,s) (s)
+	      |                             ^
+	test/server/test_server.c:341:26: note: in expansion of macro 'serf_bucket_read'
+	  341 |                 status = serf_bucket_read(servctx->clientstream, readlen,
+	      |                          ^~~~~~~~~~~~~~~~
+	test/server/test_server.c:342:43: note: expected 'const char **' but argument is of type 'char **'
+	  342 |                                           &buf, &readlen);
+	      |                                           ^~~~
+Bug-Debian: https://bugs.debian.org/1075504
+---
+diff --git i/test/server/test_server.c w/test/server/test_server.c
+index 263e84c..f6d0901 100644
+--- i/test/server/test_server.c
++++ w/test/server/test_server.c
+@@ -318,7 +318,7 @@ static apr_status_t replay(serv_ctx_t *servctx,
+         }
+         else if (action->kind == PROXY_FORWARD) {
+             apr_size_t len;
+-            char *buf;
++            const char *buf;
+ 
+             if (!servctx->proxy_client_sock) {
+                 serf__log(TEST_VERBOSE, __FILE__, "Proxy: setting up connection "
+@@ -405,7 +405,7 @@ static apr_status_t proxy_replay(serv_ctx_t *servctx,
+ 
+     if (rtnevents & APR_POLLOUT) {
+         apr_size_t len;
+-        char *buf;
++        const char *buf;
+ 
+         serf__log(TEST_VERBOSE, __FILE__, "proxy_replay: POLLOUT\n");
+         /* Send all data received from the client to the server. */
